@@ -1,0 +1,24 @@
+header {
+    align-items: center;
+    padding: 0;
+    background-color: #586294;
+
+}
+
+#logotipos {
+    display: flex;
+    justify-content: space-between;
+    background: none;
+    border: none;
+    padding: 10px;
+}
+
+#logoPag {
+    width: 50px; /* Ancho deseado */
+    height: 50px; /* Alto deseado */
+    background-image: url('../img/logo.png'); /* URL de la imagen PNG */
+    background-size: cover; /* Ajustar la imagen al tamaño del contenedor */
+    background-repeat: no-repeat; /* No repetir la imagen */
+    background-position: center; /* Centrar la imagen */
+    background-color: transparent; /* Eliminar el fondo de la imagen */
+}
