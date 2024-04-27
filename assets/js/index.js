@@ -1,4 +1,5 @@
 let movie_id;
+let color;
 function buscar(){
     const options = {
         method: 'GET',
@@ -13,13 +14,16 @@ function buscar(){
             response.json()
         )
         .then(response => {
+            document.getElementById('nota').classList.remove();
             let numPeli = Math.floor(Math.random() * 20); //numero aleatorio entre 1 y 20
             console.log(response.results[numPeli]);
             document.getElementById('linkImagen').src = 'https://image.tmdb.org/t/p/w500' + response.results[numPeli].poster_path
             document.getElementById('titulo').innerHTML = response.results[numPeli].title;
             document.getElementById('descripcion').innerHTML = response.results[numPeli].overview;
             document.getElementById('nota').innerHTML = response.results[numPeli].vote_average;
-            document.getElementById('nota').classList.add(getColor(response.results[numPeli].vote_average));
+            document.getElementById("nota").classList.remove(color)
+            color=getColor(response.results[numPeli].vote_average)
+            document.getElementById('nota').classList.add(color);
             movie_id=response.results[numPeli].id;
             movie_id=response.results[numPeli].id;
         })
@@ -28,7 +32,7 @@ function buscar(){
         );
 }
 function getColor(vote){
-    if(vote>=7.5) {
+    if(vote >= 7.5) {
         return "green";
     } else if (vote >=5 ){
         return "orange"
