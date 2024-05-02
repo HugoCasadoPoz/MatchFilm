@@ -46,7 +46,7 @@ if(localStorage.getItem('username')){
                             <img src="https://image.tmdb.org/t/p/w500${data.poster_path}" alt="${data.title}"/>
                             <div id="movie-info">
                                 <h3>${data.title}</h3>
-                                <span class="${getColor(data.vote_average)}">${data.vote_average}</span>
+                                <span class="${getColor(data.vote_average)}">${data.vote_average.toFixed(1)}</span>
                             </div>
                             <div id="overview">
                             <h3>Descripción:</h3>
