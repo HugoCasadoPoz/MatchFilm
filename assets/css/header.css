@@ -4,7 +4,10 @@ header {
     background-color: #586294;
 
 }
-
+body{
+    background-color: #ab9079 !important;
+    margin: 0;
+}
 #logotipos {
     display: flex;
     justify-content: space-between;

@@ -21,14 +21,13 @@ main{
 *{
     box-sizing: border-box;
 }
-
 :root{
     --primary-color:#ffe9d6;
     --secondary-color: #586294;
 }
 
 body{
-    background-color: var(--primary-color);
+    background-color: #ffe9d6 !important;
     font-family: 'Poppins', sans-serif;
     margin: 0;
 }

@@ -9,7 +9,7 @@ if(localStorage.getItem('username')){
     // }
     function likes(){
         let url = 'http://localhost/MatchFilm/api/get_likes.php';
-        const options = {
+        let options = {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'

@@ -6,25 +6,11 @@ function cargarAmigos(){
         fetch(url)
             .then(res => {
                 console.log(res);
+                if(res.status == 200){
                     return res.json();
-              
-                
-            })
-            .then(data => {
-                console.log(data);
-                let amigos = document.getElementById('amigo');
-                    amigos.innerHTML = '';
-                if (data.status == 200){
-                        amigos.innerHTML += `
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title"><b>${data[0].nombre_amigo}</b></h5>
-                                <a href="#" class="btn btn-primary">Ver perfil</a>
-                                <button type="submit" onclick="eliminarAmigo('${data[0].nombre_amigo}')" class="btn btn-danger">Eliminar</button>
-                            </div>
-                        </div>`;
-                }else if(data.status==400){
-                    amigos.innerHTML += `
+                }else{
+                    let amigos = document.getElementById('amigo');
+                    amigos.innerHTML = `
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">No tienes amigos</h5>
@@ -32,7 +18,21 @@ function cargarAmigos(){
                             <button type="submit" onclick="agregarAmigo(document.getElementById('nombreAmigo'))" class="btn btn-primary">Agrega a un Amigo</button>
                         </div>`;
                 }
-
+              
+                
+            })
+            .then(data => {
+                console.log(data);
+                let amigos = document.getElementById('amigo');
+                    amigos.innerHTML = `
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title"><b>${data[0].nombre_amigo}</b></h5>
+                                <a href="#" class="btn btn-primary">Ver perfil</a>
+                                <button type="submit" onclick="eliminarAmigo('${data[0].nombre_amigo}')" class="btn btn-danger">Eliminar</button>
+                            </div>
+                        </div>`;
+                
             })
             .catch(error => {
                 console.error(error);
@@ -41,9 +41,7 @@ function cargarAmigos(){
         console.error('No se encontró el nombre de usuario en el almacenamiento local');
     }
 }
-
 cargarAmigos();
-
 
 function agregarAmigo(){
     let nuevoUser = {
@@ -102,6 +100,124 @@ function agregarAmigo(){
             console.error(error);
         })
     }
+    function cargarNotificaciones(){
+        let nombreUsuario = localStorage.getItem('username');
+
+        if (nombreUsuario) {
+            let url = `http://localhost/MatchFilm/api/post_notificacion.php?nombre_usuario=${nombreUsuario}`;
+            let options = {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            };            
+            fetch(url, options)
+                .then(res => {
+                    console.log(res);
+                    if (res.status == 200){
+
+                        return res.json();
+                    }else{
+                        let notificaciones = document.getElementById('notificaciones');
+                        notificaciones.innerHTML = 'No tienes notificaciones';
+                    }
+                })
+                .then(data => {
+                    console.log(data);
+                    let notificaciones = document.getElementById('notificaciones');
+                        notificaciones.innerHTML = '';
+                        data.forEach(notificacion => {
+                            if (notificacion.notificacion == 'amistad' && notificacion.nombre_usuario == nombreUsuario){
+
+                            }else if(notificacion.notificacion == 'amistad'){
+                                notificaciones.innerHTML += `
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><b>${notificacion.nombre_usuario}</b></h5>
+                                        <p class="card-text">${notificacion.notificacion}</p>
+                                        <a href="#" onclick="aceptarAmigo('${notificacion.nombre_usuario}')" class="btn btn-primary">Aceptar</a>
+                                        <a href="#" onclick="rechazarAmigo('${notificacion.nombre_amigo}')" class="btn btn-danger">Rechazar</a>
+                                        <a href="#" onclick="eliminarAmigo('${notificacion.nombre_amigo}')" class="btn btn-danger">Eliminar</a>
+                                        <a href="#" onclick="eliminarNotificacion('${notificacion.nombre_amigo},${notificacion.nombre_usuario}, ${notificacion.notificacion}')" class="btn btn-danger">Eliminar Notificación</a>
+                                    </div>
+                                </div>`;
+                            }else{
+                                notificaciones.innerHTML += `
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><b>${notificacion.nombre_amigo}</b></h5>
+                                        <p class="card-text">${notificacion.notificacion}</p>
+                                        <a href="#" onclick="aceptarAmigo('${notificacion.nombre_amigo}')" class="btn btn-primary">Aceptar</a>
+                                        <a href="#" onclick="rechazarAmigo('${notificacion.nombre_amigo}')" class="btn btn-danger">Rechazar</a>
+                                        <a href="#" onclick="eliminarAmigo('${notificacion.nombre_amigo}')" class="btn btn-danger">Eliminar</a>
+                                        <a href="#" onclick="eliminarNotificacion('${notificacion.nombre_usuario},${notificacion.nombre_amigo},${notificacion.notificacion}')" class="btn btn-danger">Eliminar Notificación</a>
+                                    </div>
+                                </div>`;
+                            }
+                            
+                        });   
+                });
+        } else {
+            window.location='index.html';
+        }
+        
+    };
+
+    function aceptarAmigo(nombre_amigo){
+        let nombreUsuario = localStorage.getItem('username');
+        let nuevoAmigo = {
+            'nombre_usuario': nombreUsuario,
+            'nombre_amigo' : nombre_amigo,
+        }
+        
+        let url = 'http://localhost/MatchFilm/api/gestionAmigos.php';
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(nuevoAmigo)
+        };
+        fetch(url, options)
+            .then(res => {
+                if (res.status == 200) {
+                    return res.json(); 
+                }
+            })
+            .then(data => {
+                alert ('Amigo agregado Correctamente');
+                location.href='./index.php';
+
+            }) 
+        
+    }
+    cargarNotificaciones();
+                               
+    function eliminarNotificacion(nombre_usuario,nombre_amigo, notificacion){
+        let eliminar={
+            "nombre_usuario": nombre_usuario,
+            "nombre_amigo": nombre_amigo,
+            "notificacion": notificacion
+        }
+        let url = `http://localhost/MatchFilm/api/post_notificacion.php`;
+        const opciones= {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(eliminar)
+        }
+        fetch(url, opciones)
+            .then(response=> 
+                response.json()
+            ).then(datos =>{ 
+                console.log(datos);
+                cargarNotificaciones();
+            }).catch(error=> 
+                console.log(error)
+            )
+            
+    }                            
     // if(localStorage.getItem('username')){
     //     document.getElementById('cerrarSesión').addEventListener('click', cerrarSesion)
     //     function cerrarSesion(){

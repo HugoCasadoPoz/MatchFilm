@@ -11,18 +11,18 @@
         include ('./pages/header.html');
     ?>
     <main>
-        <h1>Perfil</h1><br>
+        <h3>Perfil</h3><br>
 
         <button class='botones' id="cerrarSesión">Cerrar Sesión</button></br>
         <!-- <h1>Amigo:</h1> -->
         <!-- <input type="text" id="nombreAmigo" placeholder="Nombre de usuario">
         <button class="botones" onclick="agregarAmigo()">Agregar Amigo</button> -->
-        <h1>Amigo:</h1>
-        <ul id="amigo">
-        </div>  
+        <h3>Amigo:</h3>
+        <ul id="amigo"></ul>
+        <h3>Notificaciones:</h3>
+        <div id="notificaciones"></div>
     </main>
-    <div id="resultados">
-    </div>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="./assets/js/perfil.js"></script>
 
