@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         try {
         $con->query($sql);
         echo json_encode($con->insert_id);
-        header("HTTP/1.1 201 Error al agregar amigos"); 
+        header("HTTP/1.1 201 Amigo agregado"); 
     } catch (mysqli_sql_exception $e) {
         header(`HTTP/1.1 400 $e`);
     }
@@ -20,7 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $sql = "DELETE FROM amigos WHERE nombre_usuario = '$nombreUsuario' AND nombre_amigo = '$nombreAmigo' OR nombre_usuario = '$nombreAmigo' AND nombre_amigo = '$nombreUsuario'";  
     try {
         $con->query($sql);
-        echo ('Amigo eliminado');
         header('HTTP/1.1 201 Delete');
     } catch (mysqli_sql_exception $e) {
         header('HTTP/1.1 400 Bad Request');

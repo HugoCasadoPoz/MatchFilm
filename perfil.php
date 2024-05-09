@@ -12,7 +12,7 @@
     ?>
     <main>
         <h3>Perfil</h3><br>
-
+        <h3 id="nombreUser">Nombre de usuario:</h3>
         <button class='botones' id="cerrarSesión">Cerrar Sesión</button></br>
         <!-- <h1>Amigo:</h1> -->
         <!-- <input type="text" id="nombreAmigo" placeholder="Nombre de usuario">

@@ -38,10 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nombre_usuario = $notificaciones->nombre_usuario;
     $nombre_amigo = $notificaciones->nombre_amigo;
     $notificacion = $notificaciones->notificacion;
-    if ($notificacion == ""){
 
-    }
-    $sql = "DELETE FROM notificaciones WHERE nombre_usuario = '$nombre_usuario' AND nombre_amigo = '$nombre_amigo' AND notificacion = '$notificacion'";
+    $sql = "DELETE FROM notificaciones WHERE nombre_usuario = $nombre_usuario AND nombre_amigo = $nombre_amigo AND notificacion = $notificacion";
 
     try {
         $con->query($sql);

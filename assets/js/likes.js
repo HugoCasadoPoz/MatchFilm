@@ -1,14 +1,17 @@
 if(localStorage.getItem('username')){
         
     let resultados = document.getElementById("resultados")
-    document.getElementById('matches').addEventListener('click', matches)
+    document.getElementById('matches').addEventListener('click', match)
     document.getElementById('like').addEventListener('click', likes);
 
     // function matches(){
     //     document.getElementById("resultados").innerHTML = "<h2>Todavía no tienes ningún match</h2>";
     // }
+    match()
     function likes(){
-        let url = 'http://localhost/MatchFilm/api/get_likes.php';
+        resultados.innerHTML='';
+        let nombreUsuario = localStorage.getItem('username')
+        let url = `http://localhost/MatchFilm/api/get_likes.php?nombre_usuario=${nombreUsuario}`;
         let options = {
             method: 'GET',
             headers: {
@@ -22,7 +25,7 @@ if(localStorage.getItem('username')){
                         
                 }
                 if (res.status == 400) {
-                    alert('Credenciales no válidas');
+                    resultados.innerHTML = "<h2>No tienes ningún like</h2>";
                 }
             }).then(data => {
                 console.log(data);
@@ -41,6 +44,7 @@ if(localStorage.getItem('username')){
                     fetch(url, options)
                     .then(response => response.json())
                     .then(data => {
+                        
                         resultados.innerHTML+=`
                         <div id="movie">
                             <img src="https://image.tmdb.org/t/p/w500${data.poster_path}" alt="${data.title}"/>
@@ -57,6 +61,99 @@ if(localStorage.getItem('username')){
                     })
                 });
             }) 
+    }
+    function match(){
+        let nombreUsuario = localStorage.getItem('username')
+        let url = `http://localhost/MatchFilm/api/post_amigos.php?nombre_usuario=${nombreUsuario}`;
+        let options = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        };
+        fetch(url, options)
+            .then(res => {
+                if (res.status == 200) {
+                    return res.json()
+                        
+                }
+                if (res.status == 400) {
+                   document.getElementById('resultados').innerHTML('No tienes amigo, agregue a uno');
+                }
+            }).then(data => {
+                let amigo
+                if (nombreUsuario == data[0].nombre_amigo){
+                    amigo = data[0].nombre_usuario
+                }else if (nombreUsuario == data[0].nombre_usuario){
+                    amigo = data[0].nombre_amigo
+                }
+                let amigos = {
+                    "usuario" : nombreUsuario,
+                    "amigo" : amigo
+                }
+                console.log(amigos);
+                let url ='http://localhost/MatchFilm/api/get_match.php'
+                let options ={
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(amigos)
+                }
+                fetch(url, options)
+                    .then(response =>{
+                        console.log(response);
+                       
+                        if(response.status===400){
+                            resultados.innerHTML='No tienes ningun match todavía'
+                            throw new Error('No tienes ningún match todavía');
+                        }
+                        if (response.status==200){
+                            return response.json()
+                        }
+                    })
+                    .then(data => {
+                        if (!data) {
+                            resultados.innerHTML = "<h2>No tenéis ningún Match todavía, sigue intentandolo</h2>";
+                            return
+                        }
+                        console.log(data);
+                       data.forEach(pelicula => {
+                        let url = `https://api.themoviedb.org/3/movie/${pelicula.movie_id}?language=es-ES`
+                        const options = {
+                            method: 'GET',
+                            headers: {
+                              accept: 'application/json',
+                              Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1Y2EzMWVkZGFiNjE0OGVhNWM1ODY1YWQ5NWZmMWQ4MSIsInN1YiI6IjY1ZTRlNDcyMjBlNmE1MDE2MzUxZjQzOCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.6IRKLCdBV7SK2KvzvVrlIPar4DjLApqE4RboCW99658'
+                            }
+                          };
+                        fetch(url, options)
+                        .then(response => response.json())
+                        .then(data => {
+                            resultados.innerHTML+=`
+                            <div id="movie">
+                                <img src="https://image.tmdb.org/t/p/w500${data.poster_path}" alt="${data.title}"/>
+                                <div id="movie-info">
+                                    <h3>${data.title}</h3>
+                                    <span class="${getColor(data.vote_average)}">${data.vote_average.toFixed(1)}</span>
+                                </div>
+                                <div id="overview">
+                                <h3>Descripción:</h3>
+                                <p>${data.overview}</p>
+                                </div>
+                            </div>
+                            `
+                        })
+                    });
+                    })
+                    .catch((error)=>console.error('Error:', error))
+
+            
+                
+            }).catch(()=>{
+                console.log('Error')
+            
+            })
     }
     function getColor(vote){
         if(vote>=7.5) {
