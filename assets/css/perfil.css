@@ -1,12 +1,14 @@
 body{
-    background-color: #ffe9d6 !important;
+    background-color: #ab9079 !important;
     font-family: 'Poppins', sans-serif;
 }
 main{
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
+    /* flex-direction: row; */
+    flex-wrap: wrap;
+
 }
 .botones {
     background-color: #586294;
@@ -30,7 +32,7 @@ main{
     color: #fff;
 }
 :root{
-    --primary-color:#ffe9d6;
+    --primary-color:#ab9079;
     --secondary-color: #586294;
 }
 
@@ -38,4 +40,31 @@ body{
     background-color: var(--primary-color) !important;
     font-family: 'Poppins', sans-serif;
     margin: 0;
+}
+.btn:hover{
+    background-color: #586294 !important;
+    color: #ab9079 !important;
+    border: 2px solid #ab9079 !important;
+    border-radius: 5px;
+    transition: 0.5s;
+}
+.card{
+    column-gap: 10px !important;
+    margin: 10px;
+}
+.perfilUsu {
+    width: 50%;
+}
+
+.amigo {
+    width: 50%;
+}
+
+.notificaciones {
+    width: 100%;
+}
+#notificaciones{
+    display:flex;
+    justify-content: center;
+    flex-direction: row;
 }

@@ -10,17 +10,27 @@
     <?php
         include ('./pages/header.html');
     ?>
-    <main>
-        <h3>Perfil</h3><br>
-        <h3 id="nombreUser">Nombre de usuario:</h3>
-        <button class='botones' id="cerrarSesión">Cerrar Sesión</button></br>
-        <!-- <h1>Amigo:</h1> -->
-        <!-- <input type="text" id="nombreAmigo" placeholder="Nombre de usuario">
-        <button class="botones" onclick="agregarAmigo()">Agregar Amigo</button> -->
-        <h3>Amigo:</h3>
-        <ul id="amigo"></ul>
-        <h3>Notificaciones:</h3>
-        <div id="notificaciones"></div>
+    <div id="alert"></div>
+    <main>  
+        <div class="perfilUsu">           
+            <h3>Perfil</h3>
+            <div>
+                <div class="card">
+                    <div class="card-body">
+                        <h3 id="nombreUser">Nombre de usuario:</h3>
+                        <button class='btn btn-danger' id="cerrarSesión">Cerrar Sesión</button></br>
+                    </div>
+                </div>
+            </div>
+        </div>  
+        <div class="amigo">
+            <h3>Pareja:</h3>
+            <div id="amigo"></div>
+        </div>
+        <div class="notificaciones">
+            <h3>Notificaciones:</h3>
+            <div id="notificaciones"></div>
+        </div>
     </main>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>

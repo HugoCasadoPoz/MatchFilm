@@ -1,7 +1,10 @@
 
 body{
-    background-color: #ab9079 !important;
     margin: 0;
+    /* background-image: url('../img/backgroundImage.png');
+    background-size: contain; */
+    /* background-repeat: repeat; */
+
 }
 #main{
     display:flex;

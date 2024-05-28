@@ -1,17 +1,20 @@
 if(localStorage.getItem('username')){
         
     let resultados = document.getElementById("resultados")
-    document.getElementById('matches').addEventListener('click', match)
-    document.getElementById('like').addEventListener('click', likes);
-
-    // function matches(){
-    //     document.getElementById("resultados").innerHTML = "<h2>Todavía no tienes ningún match</h2>";
-    // }
+    let btnMatch = document.getElementById('matches')
+    btnMatch.addEventListener('click', match)
+    let btnLike = document.getElementById('like')
+    btnLike.addEventListener('click', likes);
+    // let msgAlert = document.getElementById('alert')
     match()
     function likes(){
+        resultados.innerHTML=''
+        // msgAlert.innerHTML='';
+        btnMatch.classList.remove('btnPulsado')
+        btnLike.classList.add('btnPulsado')
         resultados.innerHTML='';
         let nombreUsuario = localStorage.getItem('username')
-        let url = `http://localhost/MatchFilm/api/get_likes.php?nombre_usuario=${nombreUsuario}`;
+        let url = `http://localhost/matchfilmWeb/api/get_likes.php?nombre_usuario=${nombreUsuario}`;
         let options = {
             method: 'GET',
             headers: {
@@ -33,6 +36,7 @@ if(localStorage.getItem('username')){
                     resultados.innerHTML = "<h2>No tienes ningún like</h2>";
                 }
                 data.forEach(pelicula => {
+                    console.log(pelicula.movie_id);
                     let url = `https://api.themoviedb.org/3/movie/${pelicula.movie_id}?language=es-ES`
                     const options = {
                         method: 'GET',
@@ -44,7 +48,7 @@ if(localStorage.getItem('username')){
                     fetch(url, options)
                     .then(response => response.json())
                     .then(data => {
-                        
+                        console.log(data);
                         resultados.innerHTML+=`
                         <div id="movie">
                             <img src="https://image.tmdb.org/t/p/w500${data.poster_path}" alt="${data.title}"/>
@@ -63,8 +67,12 @@ if(localStorage.getItem('username')){
             }) 
     }
     function match(){
+        resultados.innerHTML=''
+        // msgAlert.innerHTML='';
+        btnMatch.classList.add('btnPulsado')
+        btnLike.classList.remove('btnPulsado')
         let nombreUsuario = localStorage.getItem('username')
-        let url = `http://localhost/MatchFilm/api/post_amigos.php?nombre_usuario=${nombreUsuario}`;
+        let url = `http://localhost/matchfilmWeb/api/post_amigos.php?nombre_usuario=${nombreUsuario}`;
         let options = {
             method: 'GET',
             headers: {
@@ -92,7 +100,7 @@ if(localStorage.getItem('username')){
                     "amigo" : amigo
                 }
                 console.log(amigos);
-                let url ='http://localhost/MatchFilm/api/get_match.php'
+                let url ='http://localhost/matchfilmWeb/api/get_match.php'
                 let options ={
                     method: 'POST',
                     headers: {
@@ -152,7 +160,12 @@ if(localStorage.getItem('username')){
                 
             }).catch(()=>{
                 console.log('Error')
-            
+                // msgAlert.innerHTML=`
+                //     <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+                //         <strong>No tienes pareja agrega una</strong>
+                //         <a href="./perfil.php" class="btn btn-primary mr-2">Agregar Pareja</a>
+                //         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                //     </div>`
             })
     }
     function getColor(vote){
@@ -166,7 +179,17 @@ if(localStorage.getItem('username')){
     }
 }else{
     localStorage.removeItem('token');        
-    localStorage.removeItem('username');        
-    alert ('Necesita iniciar sesion');
-    location.href="./login.php";
+    localStorage.removeItem('username');    
+    // document.getElementById('alert').innerHTML=  `
+    // <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+    //     <strong>No tiene sesión iniciada</strong>
+    //     <a href="./login.php" class="btn btn-primary mr-2">Login</a>
+    //     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    // </div>`  
+    document.getElementById('alert').innerHTML=`
+    <div class="container-fluid bg-light p-5 text-center">
+    <h1>No has iniciado sesión</h1>
+    <p>Inicia sesión para acceder al contenido.</p>
+    <a href="./login.php" id="irLogin" class="btn btn-primary">Iniciar sesión</a>
+    </div>`
 }

@@ -13,6 +13,7 @@
     <?php
         include ('./pages/header.html');
     ?>
+    <div id="alert"></div>
     <h1>Registrate</h1>
 
     <form method="POST">

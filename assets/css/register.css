@@ -1,10 +1,10 @@
 /* Estilos para los inputs */
 #username,#email,#password{    
-    width: 70%;
+    width: 100%;
     padding: 10px;
-    border: 3px solid;
+    border: 1px solid #ccc;
     background-color: white;
-    color: #bb3535;
+    color: #ccc;
     font-size: 16px;
     cursor: pointer;
     text-decoration: none;
@@ -15,14 +15,11 @@
     align-items: center;/* Centrar el texto */
 }
 
-/* Estilo para el fondo gris */
 body {
-    align-items: center;
-    background-color: #ffe9d6 !important;
-    text-align: center;
+    background-color: rgba(0, 0, 0, 0.3) !important;
 }
 #cancel{
-    background-color: #bb3535;
+    background-color: #bb3535 !important;
     border-radius: 5px;
     text-decoration: none;
     font-size: 18px;
@@ -30,10 +27,40 @@ body {
     cursor: pointer;
 }
 #registerBtn{
-    background-color: #38a030;
+    background-color: #38a030!important;
     border-radius: 5px;
     text-decoration: none;
     font-size: 18px;
     margin: 10px;
     cursor: pointer;
 }
+#registerBtn:hover{
+    background-color: #54be4c !important;
+}
+#cancel:hover{
+    background-color: #d15555 !important;
+}
+.center-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    flex-direction: column;
+    top: 0;
+    bottom: 0;
+    max-width: 400px;
+    height: calc(100vh - 65px);
+  }
+  .register-form {
+    background-color: white;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    border-radius: 22px;
+    padding: 40px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    width: auto ;
+    max-width: 600px;
+    margin: 0 auto;
+  }

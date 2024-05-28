@@ -28,7 +28,7 @@ email.onblur = function() {
 
 password.onblur = function() {
     if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{5,}$/.test(password.value)) {
-        document.getElementById('passwordError').innerHTML = 'La contraseña debe contener al menos una letra minúscula, una letra mayúscula y un número';
+        document.getElementById('passwordError').innerHTML = 'La contraseña debe contener al menos una letra minúscula, mayúscula y un número';
         validar=false;
     } else {
         document.getElementById('passwordError').innerHTML = '';
@@ -37,8 +37,12 @@ password.onblur = function() {
 }
 
 document.getElementById('registerBtn').addEventListener('click', function() {
-    if (!validar || username=='' || email=='' || password=='') {
-        alert('Error en el formulario');
+    if (!validar || username.value.trim()=='' || email.value.trim()=='' || password.value.trim()=='') {
+        document.getElementById('alert').innerHTML=`
+                    <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+                        <strong>Error en el formulario</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>`
         return false;
     }else{
         let nuevoUser = {
@@ -47,36 +51,59 @@ document.getElementById('registerBtn').addEventListener('click', function() {
             'password': password.value.trim(),
         }
         if( validar && password.value.trim()!='') {
-            let url = 'http://localhost/MatchFilm/api/post_register.php';
+            let url = 'http://localhost/matchfilmWeb/api/post_register.php';
             const options = {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(nuevoUser)
+                body: JSON.stringify(nuevoUser),
+                mode: 'cors'
             };
             fetch(url, options)
                 .then(res => {
+                    console.log(res);
                     if (res.status == 200) {
                         return res.json(); 
+                    }else{
+                        document.getElementById('alert').innerHTML=`
+                        <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+                            <strong>Error de registro</strong>
+                            <a href="./login.php" class="btn btn-primary mr-2">Ir al inicio de sesión</a>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>`
                     }
                 })
                 .then(data => {
-                    alert ('Usuario registrado correctamente');
-                    location.href='./login.php';
-                }) 
+                    document.getElementById('alert').innerHTML=`
+                    <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+                        <strong>Te has registrado correctamente!</strong>
+                        <a href="./login.php" class="btn btn-primary mr-2">Ir al inicio de sesión</a>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>`
+                    
+                }).catch(e=>{
+                    console.log(e);
+                })
                 
         
             
     }else{
-        alert('Campos no válidos');
-    }
+        document.getElementById('alert').innerHTML=`
+        <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+            <strong>Credenciales no válidas</strong>
+            <a href="./index.php" class="btn btn-primary mr-2">Ir al Inicio</a>
+        </div>`    }
     
     }
     });
 }else{
-    alert('Usuario ya esta logueado')
-    location.href='./index.php';
+    document.getElementById('alert').innerHTML=`
+                    <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+                        <strong>Ya estás logueado!</strong>
+                        <a href="./index.php" class="btn btn-primary mr-2">Ir al Inicio</a>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>`
 }
     
     
