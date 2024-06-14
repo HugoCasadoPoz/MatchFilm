@@ -1,4 +1,4 @@
-if (!(localStorage.getItem('username'))){
+if (!(localStorage.getItem('token'))){
 let username = document.getElementById('username');
 let email = document.getElementById('email');
 let password = document.getElementById('password');
@@ -45,25 +45,22 @@ document.getElementById('registerBtn').addEventListener('click', function() {
                     </div>`
         return false;
     }else{
-        let nuevoUser = {
-            'username': username.value.trim(),
-            'email': email.value.trim(),
-            'password': password.value.trim(),
-        }
+        let nuevoUser = new FormData();
+            nuevoUser.append('username', document.getElementById('username').value.trim())
+            nuevoUser.append('email', document.getElementById('email').value.trim())
+            nuevoUser.append('password', document.getElementById('password').value.trim())
+            nuevoUser.append('image', document.getElementById('image').files[0])
+        console.log(nuevoUser);
         if( validar && password.value.trim()!='') {
-            let url = 'http://localhost/matchfilmWeb/api/post_register.php';
+            let url = 'http://localhost/matchfilm/api/post_register.php';
             const options = {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(nuevoUser),
-                mode: 'cors'
+                body: nuevoUser,
             };
             fetch(url, options)
                 .then(res => {
                     console.log(res);
-                    if (res.status == 200) {
+                    if (res.status == 201) {
                         return res.json(); 
                     }else{
                         document.getElementById('alert').innerHTML=`
@@ -72,9 +69,11 @@ document.getElementById('registerBtn').addEventListener('click', function() {
                             <a href="./login.php" class="btn btn-primary mr-2">Ir al inicio de sesión</a>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>`
+                        close
                     }
                 })
                 .then(data => {
+                    console.log(data);
                     document.getElementById('alert').innerHTML=`
                     <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
                         <strong>Te has registrado correctamente!</strong>

@@ -1,20 +1,28 @@
 <?php
-if (
-    (!isset($_SERVER['HTTP_REFERER']) || strpos($_SERVER['HTTP_REFERER'],'http:127.0.0.1:5500/')===false) &&
-    (!isset($_SERVER['HTTP_ORIGIN']) || $_SERVER(['HTTP_ORIGIN'] !== 'http:127.0.0.1:5500/')===false)
-){
-    http_response_code(403);
-    echo json_encode(array("mensaje" => "Acceso denegado/No tienes autorización"));
-    exit();
-}
+    require ("./../vendor/autoload.php");
+    use Firebase\JWT\JWT;
+    use Firebase\JWT\Key;
+
     require_once('./conexion.php');
 
     $con = new Conexion();
     if($_SERVER['REQUEST_METHOD'] == 'POST'){
+        $headers = getallheaders();
+    
+        $jwt = $headers['Authorization'];
+        $key = 'MatchFilm';
+        $decoded = JWT::decode($jwt, new Key($key, 'HS256'));
+    
+        // Verificar si el token está expirado
+        if ($decoded->exp < time()) {
+            http_response_code(401);
+            echo json_encode(array("mensaje" => "Token expirado"));
+            exit();
+        }
         $json = file_get_contents('php://input');
         $notificaciones  = json_decode($json);
 
-        $nombre_usuario = $notificaciones->nombre_usuario;
+        $nombre_usuario = $decoded->username;
         $nombre_amigo = $notificaciones->nombre_amigo;
         $notificacion = $notificaciones->notificacion;
 

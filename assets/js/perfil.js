@@ -6,11 +6,12 @@ function cargarAmigos(){
     if (nombreUsuario) {
         cargarInformacion();
         function cargarInformacion(){
-        let url = `http://localhost/matchfilmWeb/api/post_amigos.php?nombre_usuario=${nombreUsuario}`;
+        let url = `http://localhost/matchfilm/api/post_amigos.php`;
         let options={
             method: 'GET',
             headers:{
-                "Content-Type": "application/json" 
+                'Authorization': `${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
             }
         }
         fetch(url,options)
@@ -80,10 +81,11 @@ cargarAmigos();
 cargarNotificaciones();
 
 document.getElementById('editarUsuario').addEventListener('click', function() {
-    let url = `http://localhost/matchfilmWeb/api/get_infoUsuario.php?nombre_usuario=${localStorage.getItem('username')}`;
+    let url = `http://localhost/matchfilm/api/get_infoUsuario.php`;
     let options = {
         method: 'GET',
         headers: {
+            'Authorization': `${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
         },
     };
@@ -124,16 +126,16 @@ document.getElementById('btnEditarUsuario').addEventListener('click', function()
 });
  function editarUsuario(){
     let usuario = {
-        'antiguo_username': localStorage.getItem('username'),
         'username': document.getElementById('nombreUsuario').value,
         'email': document.getElementById('emailUsuario').value,
         'password': document.getElementById('contrasenaUsuario').value
     }
     console.log(usuario)
-    let url = 'http://localhost/matchfilmWeb/api/get_infoUsuario.php';
+    let url = 'http://localhost/matchfilm/api/get_infoUsuario.php';
     const options = {
         method: 'POST',
         headers: {
+            'Authorization': `${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(usuario)
@@ -168,15 +170,15 @@ document.getElementById('btnEditarUsuario').addEventListener('click', function()
  };
 function agregarAmigo(){
     let nuevoUser = {
-        'nombre_usuario': localStorage.getItem('username'),
         'nombre_amigo' : document.getElementById('nombreAmigo').value,
         'notificacion' : "amistad",
     }
     
-    let url = 'http://localhost/matchfilmWeb/api/post_notificacion.php';
+    let url = 'http://localhost/matchfilm/api/post_notificacion.php';
     const options = {
         method: 'POST',
         headers: {
+            'Authorization': `${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(nuevoUser)
@@ -203,7 +205,7 @@ function agregarAmigo(){
             "nombre_usuario": nombreUsuario,
             "nombre_amigo": nombreAmigo,
         }
-        let url = `http://localhost/matchfilmWeb/api/gestionAmigos.php`;
+        let url = `http://localhost/matchfilm/api/gestionAmigos.php`;
         let options= {
             method: 'DELETE',
             body: JSON.stringify(amigos)
@@ -234,13 +236,13 @@ function agregarAmigo(){
         })
     }
     function cargarNotificaciones(){
-        let nombreUsuario = localStorage.getItem('username');
 
         if (nombreUsuario) {
-            let url = `http://localhost/matchfilmWeb/api/post_notificacion.php?nombre_usuario=${nombreUsuario}`;
+            let url = `http://localhost/matchfilm/api/post_notificacion.php`;
             let options = {
                 method: 'GET',
                 headers: {
+                    'Authorization': `${localStorage.getItem('token')}`,
                     'Content-Type': 'application/json'
                 },
             };            
@@ -301,14 +303,14 @@ function agregarAmigo(){
     };
 
     function aceptarAmigo(nombre_amigo){
-        let nombreUsuario = localStorage.getItem('username');
         
 
         if (nombreUsuario) {
-            let url = `http://localhost/matchfilmWeb/api/post_amigos.php?nombre_usuario=${nombreUsuario}`;
+            let url = `http://localhost/matchfilm/api/post_amigos.php`;
             let options={
                 method: 'GET',
                 headers:{
+                    'Authorization': `${localStorage.getItem('token')}`,
                     "Content-Type": "application/json" 
                 }
             }
@@ -322,14 +324,14 @@ function agregarAmigo(){
                         </div>`
                     }else{
                         let nuevoAmigo = {
-                            'nombre_usuario': nombreUsuario,
                             'nombre_amigo' : nombre_amigo,
                         }
                         
-                        let url = 'http://localhost/matchfilmWeb/api/gestionAmigos.php';
+                        let url = 'http://localhost/matchfilm/api/gestionAmigos.php';
                         const options = {
                             method: 'POST',
                             headers: {
+                                'Authorization': `${localStorage.getItem('token')}`,
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify(nuevoAmigo)
@@ -362,15 +364,15 @@ function agregarAmigo(){
                                
     function eliminarNotificacion(nombre_usuario, nombre_amigo, notificacion){
         let eliminar={
-            "nombre_usuario": nombre_usuario,
             "nombre_amigo": nombre_amigo,
             "notificacion": notificacion
         }
         console.log(eliminar);
-        let url = `http://localhost/matchfilmWeb/api/delete_notificacion.php`;
+        let url = `http://localhost/matchfilm/api/delete_notificacion.php`;
         const opciones= {
             method: 'POST',
             headers: {
+                'Authorization': `${localStorage.getItem('token')}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(eliminar)
@@ -384,7 +386,7 @@ function agregarAmigo(){
             })
             
     }                            
-    if(localStorage.getItem('username')){
+    if(localStorage.getItem('token')){
         document.getElementById('cerrarSesión').addEventListener('click', cerrarSesion)
         function cerrarSesion(){
             localStorage.clear();

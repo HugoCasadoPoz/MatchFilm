@@ -1,18 +1,26 @@
 <?php
-if (
-    (!isset($_SERVER['HTTP_REFERER']) || strpos($_SERVER['HTTP_REFERER'],'http:127.0.0.1:5500/')===false) &&
-    (!isset($_SERVER['HTTP_ORIGIN']) || $_SERVER(['HTTP_ORIGIN'] !== 'http:127.0.0.1:5500/')===false)
-){
-    http_response_code(403);
-    echo json_encode(array("mensaje" => "Acceso denegado/No tienes autorización"));
-    exit();
-}
+
 require_once('./conexion.php');
 $con = new Conexion();
-
+require ("./../vendor/autoload.php");
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    if(isset($_GET['nombre_usuario'])) {
-        $nombreUsuario = $_GET['nombre_usuario'];
+    $headers = getallheaders();
+    
+    $jwt = $headers['Authorization'];
+    $key = 'MatchFilm';
+    $decoded = JWT::decode($jwt, new Key($key, 'HS256'));
+
+    // Verificar si el token está expirado
+    if ($decoded->exp < time()) {
+        http_response_code(401);
+        echo json_encode(array("mensaje" => "Token expirado"));
+        exit();
+    }
+
+    if(isset($decoded->username)) {
+        $nombreUsuario = $decoded->username;
         $sql = "SELECT * FROM amigos WHERE (nombre_usuario = '$nombreUsuario' OR nombre_amigo = '$nombreUsuario')";
         try {
             $resultado = $con->query($sql);

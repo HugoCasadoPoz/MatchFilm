@@ -1,4 +1,4 @@
-if (!(localStorage.getItem('username'))){
+if (!(localStorage.getItem('token'))){
     let msjAlert = document.getElementById('alert');
     let username = document.getElementById('username');
     let password = document.getElementById('password');
@@ -43,7 +43,7 @@ if (!(localStorage.getItem('username'))){
             'password' : password.value.trim()
         }
 
-        let url='http://localhost/matchfilmWeb/api/post_login.php';
+        let url='http://localhost/matchfilm/api/post_login.php';
         const options = {
             method: 'POST',
             headers:{

@@ -1,21 +1,29 @@
 <?php
-if (
-    (!isset($_SERVER['HTTP_REFERER']) || strpos($_SERVER['HTTP_REFERER'],'http:127.0.0.1:5500/')===false) &&
-    (!isset($_SERVER['HTTP_ORIGIN']) || $_SERVER(['HTTP_ORIGIN'] !== 'http:127.0.0.1:5500/')===false)
-){
-    http_response_code(403);
-    echo json_encode(array("mensaje" => "Acceso denegado/No tienes autorización"));
-    exit();
-}
+
 require_once('./conexion.php');
 
 $con = new Conexion();
+require ("./../vendor/autoload.php");
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
+$headers = getallheaders();
+    
+    $jwt = $headers['Authorization'];
+    $key = 'MatchFilm';
+    $decoded = JWT::decode($jwt, new Key($key, 'HS256'));
+
+    // Verificar si el token está expirado
+    if ($decoded->exp < time()) {
+        http_response_code(401);
+        echo json_encode(array("mensaje" => "Token expirado"));
+        exit();
+    }
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $json = file_get_contents('php://input');
     $notificaciones  = json_decode($json);
 
-    $nombre_usuario = $notificaciones->nombre_usuario;
+    $nombre_usuario = $decoded->username;
     $nombre_amigo = $notificaciones->nombre_amigo;
     $notificacion = $notificaciones->notificacion;
 
@@ -29,8 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     exit;
 }elseif($_SERVER['REQUEST_METHOD'] == 'GET'){
-    if(isset($_GET['nombre_usuario'])) {
-        $nombreUsuario = $_GET['nombre_usuario'];
+    if(isset($decoded->username)) {
+        $nombreUsuario = $decoded->username;
         $sql = "SELECT * FROM notificaciones WHERE nombre_usuario = '$nombreUsuario' OR nombre_amigo = '$nombreUsuario'";
         $result = $con->query($sql);
         $data = $result->fetch_all(MYSQLI_ASSOC);
@@ -43,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $json = file_get_contents('php://input');
     $notificaciones  = json_decode($json);
 
-    $nombre_usuario = $notificaciones->nombre_usuario;
+    $nombre_usuario = $decoded->username;
     $nombre_amigo = $notificaciones->nombre_amigo;
     $notificacion = $notificaciones->notificacion;
 

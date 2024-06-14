@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="http://localhost/matchfilmWeb/assets/css/register.css">
-    <link rel="stylesheet" href="http://localhost/matchfilmWeb/assets/css/header.css">
+    <link rel="stylesheet" href="http://localhost/matchfilm/assets/css/register.css">
+    <link rel="stylesheet" href="http://localhost/matchfilm/assets/css/header.css">
 </head>
 <body>
     <?php
@@ -30,8 +30,13 @@
             <input type="password" name="password" id="password" class="form-control" placeholder="Contraseña" required>
             <p id="passwordError" class="text-danger"></p>
           </div>
-          <div class="d-flex justify-content-between">
-            <button id="registerBtn" class="btn btn-primary" >Register</button>
+          <div style="text-align: center;">
+            <label for="profilePicture" class="form-label">Foto de perfil</label><br>
+            <input accept="image/png, image/jpeg, image/jpg, image/webp" type="file" id="image" name="imagen"/>
+            <p id="profilePictureError" class="text-danger"></p>
+          </div>
+          <div class="d-flex justify-content-between mt-3">
+            <button id="registerBtn" class="btn btn-primary">Register</button>
             <input type="reset" value="Reset" id="cancel" class="btn btn-danger">
           </div>
         <!-- </form> -->
@@ -39,6 +44,6 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
-    <script src="http://localhost/matchfilmWeb/assets/js/register.js"></script>
+    <script src="http://localhost/matchfilm/assets/js/register.js"></script>
 </body>
 </html>

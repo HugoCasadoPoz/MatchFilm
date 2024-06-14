@@ -1,18 +1,22 @@
 <?php
-if (
-    (!isset($_SERVER['HTTP_REFERER']) || strpos($_SERVER['HTTP_REFERER'],'http:127.0.0.1:5500/')===false) &&
-    (!isset($_SERVER['HTTP_ORIGIN']) || $_SERVER(['HTTP_ORIGIN'] !== 'http:127.0.0.1:5500/')===false)
-){
-    http_response_code(403);
-    echo json_encode(array("mensaje" => "Acceso denegado/No tienes autorización"));
-    exit();
-}
+require ("./../vendor/autoload.php");
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 require_once('./conexion.php');
 $json =  json_decode(file_get_contents("php://input"), true);
 $con = new Conexion();
 $json = file_get_contents('php://input');
 $amigos  = json_decode($json);
-$nombreUsuario = $amigos->nombre_usuario;
+$headers = getallheaders();
+$jwt = $headers['Authorization'];
+$key = 'MatchFilm';
+$decoded = JWT::decode($jwt, new Key($key, 'HS256'));
+if ($decoded->exp < time()) {
+    http_response_code(401);
+    echo json_encode(array("mensaje" => "Token expirado"));
+    exit();
+}
+$nombreUsuario = $decoded->username;
 $nombreAmigo = $amigos->nombre_amigo;
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $sql = "INSERT INTO `amigos` (`nombre_usuario`, `nombre_amigo`) VALUES ('$nombreUsuario', '$nombreAmigo')";

@@ -1,12 +1,4 @@
 <?php
-if (
-    (!isset($_SERVER['HTTP_REFERER']) || strpos($_SERVER['HTTP_REFERER'],'http:127.0.0.1:5500/')===false) &&
-    (!isset($_SERVER['HTTP_ORIGIN']) || $_SERVER(['HTTP_ORIGIN'] !== 'http:127.0.0.1:5500/')===false)
-){
-    http_response_code(403);
-    echo json_encode(array("mensaje" => "Acceso denegado/No tienes autorización"));
-    exit();
-}
 require ("./../vendor/autoload.php");
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
