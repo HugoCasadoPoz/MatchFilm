@@ -64,3 +64,12 @@ body {
     max-width: 600px;
     margin: 0 auto;
   }
+  .btn{
+    background-color: #858eb9 !important;
+    color: #000000 !important;
+    border: 2px solid #000000 !important;
+    border-radius: 5px;
+    padding: 5px;
+    cursor: pointer;
+    transition: 0.5s;
+}

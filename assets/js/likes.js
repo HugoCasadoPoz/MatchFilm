@@ -1,4 +1,4 @@
-if (localStorage.getItem('username')) {
+if (localStorage.getItem('token')) {
 
     let resultados = document.getElementById("resultados");
     let btnMatch = document.getElementById('matches');
@@ -18,7 +18,6 @@ if (localStorage.getItem('username')) {
             method: 'GET',
             headers: {
                 'Authorization': `${localStorage.getItem('token')}`,
-                'Content-Type': 'application/json'
             },
         };
         fetch(url, options)
@@ -83,20 +82,22 @@ if (localStorage.getItem('username')) {
                     close;
                 }
             }).then(data => {
+                console.log(data);
+                console.log(nombreUsuario);
                 let amigo;
-                if (nombreUsuario == data[0].nombre_amigo) {
+                if (nombreUsuario.toLowerCase() == data[0].nombre_amigo) {
                     amigo = data[0].nombre_usuario;
-                } else if (nombreUsuario == data[0].nombre_usuario) {
+                } else if (nombreUsuario.toLowerCase() == data[0].nombre_usuario) {
                     amigo = data[0].nombre_amigo;
                 }
                 let amigos = {
                     "amigo": amigo
                 };
-                console.log(amigos);
                 let url = 'http://localhost/matchfilm/api/get_match.php';
                 let options = {
                     method: 'POST',
                     headers: {
+                        'Authorization': `${localStorage.getItem('token')}`,
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(amigos)
@@ -119,7 +120,7 @@ if (localStorage.getItem('username')) {
                         }
                         console.log(data);
                         data.forEach(pelicula => {
-                            fetch(`get_movie.php?id=${pelicula.movie_id}`)
+                            fetch(`http://localhost/matchfilm/assets/php/get_movie.php?id=${pelicula.movie_id}`)
                                 .then(response => response.json())
                                 .then(data => {
                                     resultados.innerHTML += `

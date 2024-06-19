@@ -10,7 +10,13 @@
     <?php
         include ('./header.html');
     ?>
-    <main>
+    <!-- Agrega este div justo después del header para el nuevo botón -->
+    <div class="d-flex justify-content-end p-2">
+        <button class="btn btn-primary" onclick="location.href='http://localhost/matchfilm/pages/peliculasVistas.php'">
+            <img src="http://localhost/matchfilm/assets/img/vistas.png" alt="Películas Vistas" width="30px" height="30px">
+        </button>
+    </div>
+    <main id="main">
         <button class='botones' id="matches">Matches</button>
         <button class='botones' id="like">Likes</button>
     </main>

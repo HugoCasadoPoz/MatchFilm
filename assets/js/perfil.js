@@ -125,11 +125,12 @@ document.getElementById('btnEditarUsuario').addEventListener('click', function()
     }
 });
  function editarUsuario(){
-    let usuario = {
-        'username': document.getElementById('nombreUsuario').value,
-        'email': document.getElementById('emailUsuario').value,
-        'password': document.getElementById('contrasenaUsuario').value
-    }
+    let usuario = new FormData();
+            usuario.append('username', document.getElementById('nombreUsuario').value.trim())
+            usuario.append('email', document.getElementById('emailUsuario').value.trim())
+            usuario.append('password', document.getElementById('contrasenaUsuario').value.trim())
+            usuario.append('image', document.getElementById('imagenUsuario').files[0])
+    
     console.log(usuario)
     let url = 'http://localhost/matchfilm/api/get_infoUsuario.php';
     const options = {
@@ -138,12 +139,12 @@ document.getElementById('btnEditarUsuario').addEventListener('click', function()
             'Authorization': `${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(usuario)
+        body: usuario
     };
     fetch(url, options)
         .then(res => {
             console.log(res);
-            if (res.status == 200) {
+            if (res.status == 201) {
                 return res.json(); 
             }else {
                 throw new Error('Error al actualizar el usuario');

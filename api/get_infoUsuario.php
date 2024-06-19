@@ -8,8 +8,9 @@ require ("./../vendor/autoload.php");
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 $headers = getallheaders();
-    
+
     $jwt = $headers['Authorization'];
+    $jwt = str_replace('Bearer ', '', $jwt);
     $key = 'MatchFilm';
     $decoded = JWT::decode($jwt, new Key($key, 'HS256'));
 
@@ -44,9 +45,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $usuario  = json_decode($json);
     
     $antiguo_username = $decoded->username;
-    $username = $usuario->username;
-    $email = $usuario->email;
-    $password = $usuario->password;
+    $username = $_POST['username'];
+    $email = $_POST['email'];
+    $password =  $_POST['password'];
+    $imagen_base64 = base64_encode(file_get_contents($_FILES['image']['tmp_name']));
 
     if (empty($username) || empty($email) || empty($password)) {
         header('Content-Type: application/json');
@@ -54,13 +56,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         echo json_encode(["error" => "Todos los campos son requeridos"]);
         exit;
     }
-    $password = password_hash($usuario->password, PASSWORD_BCRYPT);
+    $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
 
     require_once('./conexion.php');
     $con = new Conexion();
 
     // Actualizar tabla usuarios
-    $sql_usuarios = "UPDATE usuarios SET email = '$email', password = '$password',  username = '$username' WHERE username = '$antiguo_username'";
+    $sql_usuarios = "UPDATE usuarios SET email = '$email', password = '$password',  username = '$username', image = '$imagen_base64' WHERE username = '$antiguo_username'";
 
     // Actualizar tabla amigos
     $sql_amigos_nombre_usuario = "UPDATE amigos SET nombre_usuario = '$username' WHERE nombre_usuario = '$antiguo_username'";
@@ -81,8 +83,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $con->query($sql_notificaciones_nombre_amigo);
         $con->query($sql_movie_likes);
 
-        header('HTTP/1.1 200 OK');
-        echo json_encode(["message" => "Usuario actualizado correctamente", "username" => $usuario->username]);
+        header('HTTP/1.1 201 OK');
+        echo json_encode(["message" => "Usuario actualizado correctamente", "username" => $_POST['username']]);
     } catch (mysqli_sql_exception $e) {
         header('HTTP/1.1 500 Internal Server Error');
         echo json_encode(["error" => $e->getMessage()]);
