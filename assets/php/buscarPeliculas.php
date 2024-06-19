@@ -1,8 +1,6 @@
 <?php
 header('Content-Type: application/json');
 
-require_once('vendor/autoload.php');
-
 $api_key = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1Y2EzMWVkZGFiNjE0OGVhNWM1ODY1YWQ5NWZmMWQ4MSIsInN1YiI6IjY1ZTRlNDcyMjBlNmE1MDE2MzUxZjQzOCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.6IRKLCdBV7SK2KvzvVrlIPar4DjLApqE4RboCW99658';
 
 if (!isset($_GET['query']) || empty($_GET['query'])) {

@@ -6,7 +6,6 @@ if (localStorage.getItem('token')) {
 
     function peliculasVistas() {
         resultados.innerHTML = '';
-        resultados.innerHTML = '';
         let url = `http://localhost/matchfilm/api/get_likes.php`;
         let options = {
             method: 'GET',
@@ -62,6 +61,74 @@ if (localStorage.getItem('token')) {
             return "red";
         }
     }
+
+    document.getElementById('searchActionButton').addEventListener('click', function() {
+        var movieTitle = document.getElementById('searchInput').value;
+        if(movieTitle) {
+            console.log(movieTitle);
+            fetch(`http://localhost/matchfilm/assets/php/buscarPeliculas.php?query=${movieTitle}`)
+            .then(response => {
+                console.log(response)
+                return response.json()
+            })
+            .then(data => {
+                var resultados = document.getElementById('resultados');
+                resultados.innerHTML = '';
+
+                if (data.results && data.results.length > 0) {
+                    data.results.forEach(movie => {
+                        var movieItem = document.createElement('div');
+                        movieItem.className = 'result-item';
+                        movieItem.innerHTML = `
+                            <h5>${movie.title}</h5>
+                            <p>${movie.overview}</p>
+                            <input type="checkbox" class="movie-checkbox" data-movie-id="${movie.id}">
+                        `;
+                        resultados.appendChild(movieItem);
+                    });
+                } else {
+                    resultados.innerHTML = '<p>No se encontraron resultados.</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching movie data:', error);
+            });
+        } else {
+            alert('Por favor, ingresa el nombre de una película.');
+        }
+    });
+
+    document.getElementById('peliculasVistasButton').addEventListener('click', function() {
+        var checkedMovies = document.querySelectorAll('.movie-checkbox:checked');
+        var movieIds = [];
+        checkedMovies.forEach(checkbox => {
+            movieIds.push(checkbox.dataset.movieId);
+        });
+
+        if (movieIds.length > 0) {
+            fetch('http://localhost/matchfilm/api/marcar_vistas.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `${localStorage.getItem('token')}`,
+                },
+                body: JSON.stringify({ movieIds: movieIds })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Películas marcadas como vistas.');
+                    peliculasVistas(); // Actualizar la lista de películas vistas
+                } else {
+                    alert('Hubo un problema al marcar las películas como vistas.');
+                }
+            })
+            .catch(error => console.error('Error marking movies as seen:', error));
+        } else {
+            alert('Por favor, selecciona al menos una película.');
+        }
+    });
+
 } else {
     localStorage.removeItem('token');
     localStorage.removeItem('username');
