@@ -41,6 +41,7 @@ if (localStorage.getItem('token')) {
                             console.log(data);
                             resultados.innerHTML += `
                             <div id="movie">
+                            <button class="btn" onclick="agregarVistas(${data.id})">Película ya vista</button>
                                 <img src="https://image.tmdb.org/t/p/w500${data.poster_path}" alt="${data.title}"/>
                                 <div id="movie-info">
                                     <h3>${data.title}</h3>
@@ -146,7 +147,54 @@ if (localStorage.getItem('token')) {
                 console.log('Error');
             });
     }
-
+    function agregarVistas (movie_id){
+        let movie={
+            "movie_id": movie_id
+        }
+        fetch('http://localhost/matchfilm/api/post_peliculasVistas.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': localStorage.getItem('token')
+            },
+            body: JSON.stringify(movie)
+        })
+        .then(res => {
+            console.log(res);
+            if (res.status==201){
+                return res.json()
+            }
+            else{
+                console.log("Error al agregar la película");
+                close
+            }
+        })
+        .then(data => {
+            console.log(data);
+            fetch('http://localhost/matchfilm/api/post_peliculasVistas.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': localStorage.getItem('token')
+                },
+                body: JSON.stringify(movie)
+            }).then(res => {
+                console.log(res);
+                if (res.status==201){
+                    return res.json()
+                }
+                else{
+                    console.log("Error al agregar la película");
+                    close
+                }
+            })
+            likes();
+        })
+        .catch(error => {
+            console.error('Hubo un problema con tu operación de fetch:', error);
+            showAlert('Error al conectar con el servidor', 'error');
+        });
+    }
     function getColor(vote) {
         if (vote >= 7.5) {
             return "green";

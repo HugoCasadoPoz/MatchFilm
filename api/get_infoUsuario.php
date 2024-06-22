@@ -39,16 +39,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         header(`HTTP/1.1 400 $e`);
     }
     exit;
-}elseif ($_SERVER['REQUEST_METHOD'] == 'POST'){
-
-    $json = file_get_contents('php://input');
-    $usuario  = json_decode($json);
-    
-    $antiguo_username = $decoded->username;
+}elseif ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Capturar los datos del formulario
     $username = $_POST['username'];
     $email = $_POST['email'];
-    $password =  $_POST['password'];
-    $imagen_base64 = base64_encode(file_get_contents($_FILES['image']['tmp_name']));
+    $password = $_POST['password'];
+
+    if (isset($_FILES['image']) && $_FILES['image']['tmp_name'] !== '') {
+        $imagen_base64 = base64_encode(file_get_contents($_FILES['image']['tmp_name']));
+    }
 
     if (empty($username) || empty($email) || empty($password)) {
         header('Content-Type: application/json');
@@ -56,38 +55,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         echo json_encode(["error" => "Todos los campos son requeridos"]);
         exit;
     }
-    $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
 
+    // Hash de la contraseña
+    $password_hash = password_hash($password, PASSWORD_BCRYPT);
+
+    // Conexión a la base de datos
     require_once('./conexion.php');
     $con = new Conexion();
 
-    // Actualizar tabla usuarios
-    $sql_usuarios = "UPDATE usuarios SET email = '$email', password = '$password',  username = '$username', image = '$imagen_base64' WHERE username = '$antiguo_username'";
+    // Obtener el usuario antiguo del token decodificado
+    $antiguo_username = $decoded->username;
 
-    // Actualizar tabla amigos
+    // Actualizar tabla usuarios con prepared statement
+    $stmt = $con->prepare("UPDATE usuarios SET email = ?, password = ?, username = ?, image = ? WHERE username = ?");
+    $stmt->bind_param("sssss", $email, $password_hash, $username, $imagen_base64, $antiguo_username);
+
+    // Actualizar otras tablas relacionadas si es necesario
     $sql_amigos_nombre_usuario = "UPDATE amigos SET nombre_usuario = '$username' WHERE nombre_usuario = '$antiguo_username'";
     $sql_amigos_nombre_amigo = "UPDATE amigos SET nombre_amigo = '$username' WHERE nombre_amigo = '$antiguo_username'";
-
-    // Actualizar tabla notificaciones
     $sql_notificaciones_nombre_usuario = "UPDATE notificaciones SET nombre_usuario = '$username' WHERE nombre_usuario = '$antiguo_username'";
     $sql_notificaciones_nombre_amigo = "UPDATE notificaciones SET nombre_amigo = '$username' WHERE nombre_amigo = '$antiguo_username'";
-
-    // Actualizar tabla movie_likes
     $sql_movie_likes = "UPDATE movie_likes SET username = '$username' WHERE username = '$antiguo_username'";
 
     try {
-        $con->query($sql_usuarios);
+        $stmt->execute();
         $con->query($sql_amigos_nombre_usuario);
         $con->query($sql_amigos_nombre_amigo);
         $con->query($sql_notificaciones_nombre_usuario);
         $con->query($sql_notificaciones_nombre_amigo);
         $con->query($sql_movie_likes);
 
-        header('HTTP/1.1 201 OK');
-        echo json_encode(["message" => "Usuario actualizado correctamente", "username" => $_POST['username']]);
+        header('HTTP/1.1 200 OK');
+        echo json_encode(["message" => "Usuario actualizado correctamente", "username" => $username]);
     } catch (mysqli_sql_exception $e) {
         header('HTTP/1.1 500 Internal Server Error');
         echo json_encode(["error" => $e->getMessage()]);
     }
+
     exit;
 }

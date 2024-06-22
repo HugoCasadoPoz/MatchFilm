@@ -137,20 +137,20 @@ document.getElementById('btnEditarUsuario').addEventListener('click', function()
         method: 'POST',
         headers: {
             'Authorization': `${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
         },
         body: usuario
     };
     fetch(url, options)
         .then(res => {
             console.log(res);
-            if (res.status == 201) {
+            if (res.status == 200) {
                 return res.json(); 
             }else {
                 throw new Error('Error al actualizar el usuario');
             }
         })
         .then(data => {
+            obtenerNuevoToken(data.username)
             console.log(data);
             localStorage.removeItem('username');
             localStorage.setItem('username', data.username);
@@ -160,7 +160,7 @@ document.getElementById('btnEditarUsuario').addEventListener('click', function()
                         <button type="button" class="btn btn-primary" onclick="reloadPage()">Recargar Página</button>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>`;
-            
+
         }) 
         .catch(error => {
             console.error(error);
@@ -386,7 +386,32 @@ function agregarAmigo(){
                 console.log(error)
             })
             
-    }                            
+    } 
+    function obtenerNuevoToken(usuario) {
+        fetch(`http://localhost/matchfilm/api/generar_token.php?username=${usuario}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+        .then(res => {
+            if (res.ok) {
+                return res.json();
+            } else {
+                throw new Error('Error al obtener el nuevo token');
+            }
+        })
+        .then(data => {
+            localStorage.removeItem('token')
+            localStorage.setItem('token', data.token); // Actualizar el token en localStorage
+            console.log('Token actualizado:', data.token);
+            // Aquí puedes continuar con las operaciones que requieren el nuevo token
+        })
+        .catch(error => {
+            console.error('Error en la solicitud de nuevo token:', error);
+        });
+    }
+                               
     if(localStorage.getItem('token')){
         document.getElementById('cerrarSesión').addEventListener('click', cerrarSesion)
         function cerrarSesion(){

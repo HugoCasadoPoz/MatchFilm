@@ -17,6 +17,7 @@ if(localStorage.getItem('token')){
             close
         }else{
             console.log('Error en la consulta');
+            localStorage.clear()
             close
         }
     })

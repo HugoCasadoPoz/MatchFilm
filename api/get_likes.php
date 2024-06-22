@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         exit();
     }
     $username = $decoded->username;
-    $sql = "SELECT * FROM movie_likes WHERE  `like` = 1 AND `username` = '$username' ";
+    $sql = "SELECT * FROM movie_likes WHERE  `like` = 1 AND `username` = '$username' AND `vista` IS NULL ";
     try {
         $resultado = $con->query($sql);
         if ($resultado->num_rows>0){

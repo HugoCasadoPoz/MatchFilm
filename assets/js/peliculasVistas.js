@@ -1,12 +1,10 @@
 if (localStorage.getItem('token')) {
-
     let resultados = document.getElementById("resultados");
-
     peliculasVistas();
 
     function peliculasVistas() {
         resultados.innerHTML = '';
-        let url = `http://localhost/matchfilm/api/get_likes.php`;
+        let url = `http://localhost/matchfilm/api/get_peliculasVistas.php`;
         let options = {
             method: 'GET',
             headers: {
@@ -26,27 +24,31 @@ if (localStorage.getItem('token')) {
                 if (data.length === 0) {
                     resultados.innerHTML = "<h2>No has visto ninguna película</h2>";
                 }
+                let movieIds = new Set();
                 data.forEach(pelicula => {
-                    console.log(pelicula.movie_id);
-                    fetch(`http://localhost/matchfilm/assets/php/get_movie.php?id=${pelicula.movie_id}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            console.log(data);
-                            resultados.innerHTML += `
-                            <div id="movie">
-                                <img src="https://image.tmdb.org/t/p/w500${data.poster_path}" alt="${data.title}"/>
-                                <div id="movie-info">
-                                    <h3>${data.title}</h3>
-                                    <span class="${getColor(data.vote_average)}">${data.vote_average.toFixed(1)}</span>
+                    if (!movieIds.has(pelicula.movie_id)) {
+                        movieIds.add(pelicula.movie_id);
+                        console.log(pelicula.movie_id);
+                        fetch(`http://localhost/matchfilm/assets/php/get_movie.php?id=${pelicula.movie_id}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log(data);
+                                resultados.innerHTML += `
+                                <div id="movie">
+                                    <img src="https://image.tmdb.org/t/p/w500${data.poster_path}" alt="${data.title}"/>
+                                    <div id="movie-info">
+                                        <h3>${data.title}</h3>
+                                        <span class="${getColor(data.vote_average)}">${data.vote_average.toFixed(1)}</span>
+                                    </div>
+                                    <div id="overview">
+                                    <h3>Descripción:</h3>
+                                    <p>${data.overview}</p>
+                                    </div>
                                 </div>
-                                <div id="overview">
-                                <h3>Descripción:</h3>
-                                <p>${data.overview}</p>
-                                </div>
-                            </div>
-                            `;
-                        })
-                        .catch(err => console.error(err));
+                                `;
+                            })
+                            .catch(err => console.error(err));
+                    }
                 });
             })
             .catch(err => console.error(err));
@@ -72,8 +74,8 @@ if (localStorage.getItem('token')) {
                 return response.json()
             })
             .then(data => {
-                var resultados = document.getElementById('resultados');
-                resultados.innerHTML = '';
+                var resultadosBusqueda = document.getElementById('resultadosBusqueda');
+                resultadosBusqueda.innerHTML = '';
 
                 if (data.results && data.results.length > 0) {
                     data.results.forEach(movie => {
@@ -81,13 +83,12 @@ if (localStorage.getItem('token')) {
                         movieItem.className = 'result-item';
                         movieItem.innerHTML = `
                             <h5>${movie.title}</h5>
-                            <p>${movie.overview}</p>
                             <input type="checkbox" class="movie-checkbox" data-movie-id="${movie.id}">
                         `;
-                        resultados.appendChild(movieItem);
+                        resultadosBusqueda.appendChild(movieItem);
                     });
                 } else {
-                    resultados.innerHTML = '<p>No se encontraron resultados.</p>';
+                    resultadosBusqueda.innerHTML = '<p>No se encontraron resultados.</p>';
                 }
             })
             .catch(error => {
@@ -98,35 +99,48 @@ if (localStorage.getItem('token')) {
         }
     });
 
-    document.getElementById('peliculasVistasButton').addEventListener('click', function() {
-        var checkedMovies = document.querySelectorAll('.movie-checkbox:checked');
-        var movieIds = [];
-        checkedMovies.forEach(checkbox => {
-            movieIds.push(checkbox.dataset.movieId);
+    document.getElementById('searchButton').addEventListener('click', function() {
+        var searchBar = document.querySelector('.search-bar');
+        searchBar.style.display = searchBar.style.display === 'none' ? 'block' : 'none';
+    });
+
+    document.getElementById('addMovieButton').addEventListener('click', function() {
+        var selectedMovies = [];
+        var checkboxes = document.querySelectorAll('.movie-checkbox:checked');
+        checkboxes.forEach(function(checkbox) {
+            selectedMovies.push({
+                "movie_id": checkbox.getAttribute('data-movie-id')
+            });
         });
 
-        if (movieIds.length > 0) {
-            fetch('http://localhost/matchfilm/api/marcar_vistas.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `${localStorage.getItem('token')}`,
-                },
-                body: JSON.stringify({ movieIds: movieIds })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Películas marcadas como vistas.');
-                    peliculasVistas(); // Actualizar la lista de películas vistas
-                } else {
-                    alert('Hubo un problema al marcar las películas como vistas.');
-                }
-            })
-            .catch(error => console.error('Error marking movies as seen:', error));
-        } else {
-            alert('Por favor, selecciona al menos una película.');
-        }
+        selectedMovies.forEach(function(movie) {
+            console.log(movie);
+            fetch('http://localhost/matchfilm/api/post_peliculasVistas.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': localStorage.getItem('token')
+                    },
+                    body: JSON.stringify(movie)
+                })
+                .then(res => {
+                    console.log(res);
+                    if (res.status == 201) {
+                        return res.json()
+                    } else {
+                        console.log("Error al agregar la película");
+                        close
+                    }
+                })
+                .then(data => {
+                    console.log(data);
+                    peliculasVistas();
+                })
+                .catch(error => {
+                    console.error('Hubo un problema con tu operación de fetch:', error);
+                    showAlert('Error al conectar con el servidor', 'error');
+                });
+        });
     });
 
 } else {

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>MatchFilm - Películas Vistas</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -15,16 +16,36 @@
             z-index: 999;
             border-radius: 10px;
         }
+
         .search-bar input {
             display: inline-block;
             width: calc(100% - 40px);
         }
-        
+
+        #resultadosBusqueda {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+
+        .result-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .result-item h5 {
+            margin: 0;
+            flex-grow: 1;
+        }
     </style>
 </head>
+
 <body>
     <?php
-        include ('./header.html');
+    include('./header.html');
     ?>
     <!-- Barra de búsqueda desplegable -->
     <div class="position-relative">
@@ -38,6 +59,7 @@
                     <i class="bi bi-search"></i>
                 </button>
             </div>
+            <div id="resultadosBusqueda" class="bg-white border p-2"></div>
             <button class="btn btn-primary mt-2" id="addMovieButton">Agregar a vistas</button>
         </div>
     </div>
@@ -46,23 +68,7 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="http://localhost/matchfilm/assets/js/peliculasVistas.js"></script>
-    <script>
-        document.getElementById('searchButton').addEventListener('click', function() {
-            var searchBar = document.querySelector('.search-bar');
-            searchBar.style.display = searchBar.style.display === 'none' ? 'block' : 'none';
-        });
-
-        document.getElementById('addMovieButton').addEventListener('click', function() {
-            var movieTitle = document.getElementById('searchInput').value;
-            if(movieTitle) {
-                // Aquí puedes agregar la lógica para agregar la película a la lista de vistas
-                alert('Película "' + movieTitle + '" agregada a vistas.');
-            } else {
-                alert('Por favor, ingresa el nombre de una película.');
-            }
-        });
-    </script>
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css">
 </body>
+
 </html>
