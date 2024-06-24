@@ -1,6 +1,8 @@
 <?php
  require ("./../vendor/autoload.php");
- use Firebase\JWT\JWT;
+
+use Firebase\JWT\ExpiredException;
+use Firebase\JWT\JWT;
  use Firebase\JWT\Key;
 
  require_once('./conexion.php');
@@ -11,6 +13,7 @@
  
      $jwt = $headers['Authorization'];
      $key = 'MatchFilm';
+     try {
      $decoded = JWT::decode($jwt, new Key($key, 'HS256'));
  
      // Verificar si el token está expirado
@@ -23,7 +26,6 @@
      
      $sql = "SELECT image FROM usuarios WHERE username = '$nombre_usuario'";
 
-     try {
         $resultado = $con->query($sql);
         if ($resultado->num_rows>0){
             $fila = $resultado->fetch_assoc();
@@ -35,6 +37,8 @@
         }
     } catch (mysqli_sql_exception $e) {
         header(`HTTP/1.1 400 $e`);
+    } catch (ExpiredException){
+        header('HTTP/1.1 401 Token expirado');
     }
      exit;
  }

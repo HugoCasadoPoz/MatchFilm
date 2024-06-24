@@ -10,7 +10,6 @@ use Firebase\JWT\Key;
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $headers = getallheaders();
 
-    // Verifica si el encabezado de autorización está presente
     if (!isset($headers['Authorization'])) {
         http_response_code(400);
         echo json_encode(array("mensaje" => "Falta el token de autorización"));

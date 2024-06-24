@@ -1,7 +1,7 @@
 document.getElementById('nombreUser').innerHTML='Nombre Usuario: <b><u>'+localStorage.getItem('username')+'</u></b>'
 let msjAlert = document.getElementById('alert');
 function cargarAmigos(){
-    let nombreUsuario = localStorage.getItem('username');
+    let nombreUsuario = localStorage.getItem('token');
 
     if (nombreUsuario) {
         cargarInformacion();
@@ -28,10 +28,24 @@ function cargarAmigos(){
                             <p id="usernameError"></p>
                             <button type="submit" id="btnAgregarAmigo" class="btn btn-primary">Agrega a tu pareja</button>
                         </div>`;
-                        
+                        close
                 }
             })
             .then(data => {
+                if (data.length==0){
+                    let amigos = document.getElementById('amigo');
+                    amigos.innerHTML = `
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">No tienes pareja</h5>
+                            <input type="text" id="nombreAmigo" class="form-control" placeholder="Nombre de usuario"><br>
+                            <p id="usernameError"></p>
+                            <button type="submit" id="btnAgregarAmigo" class="btn btn-primary">Agrega a tu pareja</button>
+                        </div>`;
+                        close
+                }else{
+
+                
                 amigos = document.getElementById('amigo');
                 if (data[0].nombre_amigo==nombreUsuario){
                     amigos.innerHTML = `
@@ -50,7 +64,7 @@ function cargarAmigos(){
                         </div>
                     </div>`;
                 }
-                    
+            }
                 
             }).finally(()=>{
                 document.getElementById('nombreAmigo').onblur = function() {
@@ -129,7 +143,9 @@ document.getElementById('btnEditarUsuario').addEventListener('click', function()
             usuario.append('username', document.getElementById('nombreUsuario').value.trim())
             usuario.append('email', document.getElementById('emailUsuario').value.trim())
             usuario.append('password', document.getElementById('contrasenaUsuario').value.trim())
-            usuario.append('image', document.getElementById('imagenUsuario').files[0])
+            if(document.getElementById('imagenUsuario').files[0]){
+                usuario.append('image', document.getElementById('imagenUsuario').files[0])
+            }
     
     console.log(usuario)
     let url = 'http://localhost/matchfilm/api/get_infoUsuario.php';

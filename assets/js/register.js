@@ -45,6 +45,7 @@ document.getElementById('registerBtn').addEventListener('click', function() {
                     </div>`
         return false;
     }else{
+        console.log(document.getElementById('image').files[0]);
         let nuevoUser = new FormData();
             nuevoUser.append('username', document.getElementById('username').value.trim())
             nuevoUser.append('email', document.getElementById('email').value.trim())

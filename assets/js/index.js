@@ -9,8 +9,6 @@ if (localStorage.getItem('token')) {
             method: 'GET',
             headers: {
                 'Authorization': `${localStorage.getItem('token')}`,
-                'Content-Type': 'application/json'
-
             }
         };
         fetch(url, options)
@@ -91,7 +89,6 @@ if (localStorage.getItem('token')) {
                             }
                         })
                         .then(data => {
-                            // handle data if needed
                         });
                 });
             })

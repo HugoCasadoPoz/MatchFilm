@@ -11,9 +11,11 @@ if(localStorage.getItem('token')){
     .then(res => {
         if(res.status==200){
             return res.json();
-        }else if (res.status=401){
+        }else if (res.status==401){
             console.log('Token caducado');
             localStorage.clear()
+            alert('Su sesión ha expidado tiene que iniciar sesión de nuevo')
+            window.location.href = 'http://localhost/matchfilm/pages/login.php'
             close
         }else{
             console.log('Error en la consulta');
