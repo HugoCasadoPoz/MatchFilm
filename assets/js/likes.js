@@ -125,6 +125,7 @@ if (localStorage.getItem('token')) {
                                 .then(data => {
                                     resultados.innerHTML += `
                                     <div id="movie">
+                                        <button class="btn" onclick="agregarVistas(${data.id})">Película ya vista</button>
                                         <img src="https://image.tmdb.org/t/p/w500${data.poster_path}" alt="${data.title}"/>
                                         <div id="movie-info">
                                             <h3>${data.title}</h3>

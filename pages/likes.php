@@ -14,7 +14,7 @@
     ?>
     <div class="d-flex justify-content-end p-2">
         <button class="btn btn-primary" onclick="location.href='http://localhost/matchfilm/pages/peliculasVistas.php'">
-            <img src="http://localhost/matchfilm/assets/img/vistas.png" alt="Películas Vistas" width="30px" height="30px">
+            Películas Vistas
         </button>
     </div>
     <main id="main">

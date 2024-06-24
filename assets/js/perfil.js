@@ -1,7 +1,7 @@
 document.getElementById('nombreUser').innerHTML='Nombre Usuario: <b><u>'+localStorage.getItem('username')+'</u></b>'
 let msjAlert = document.getElementById('alert');
 function cargarAmigos(){
-    let nombreUsuario = localStorage.getItem('token');
+    let nombreUsuario = localStorage.getItem('username');
 
     if (nombreUsuario) {
         cargarInformacion();
@@ -11,7 +11,6 @@ function cargarAmigos(){
             method: 'GET',
             headers:{
                 'Authorization': `${localStorage.getItem('token')}`,
-                'Content-Type': 'application/json'
             }
         }
         fetch(url,options)
@@ -44,10 +43,8 @@ function cargarAmigos(){
                         </div>`;
                         close
                 }else{
-
-                
                 amigos = document.getElementById('amigo');
-                if (data[0].nombre_amigo==nombreUsuario){
+                if (data[0].nombre_amigo==localStorage.getItem('username')){
                     amigos.innerHTML = `
                     <div class="card">
                         <div class="card-body">
@@ -100,12 +97,10 @@ document.getElementById('editarUsuario').addEventListener('click', function() {
         method: 'GET',
         headers: {
             'Authorization': `${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
         },
     };
     fetch(url, options)
         .then(res => {
-            console.log(res);
             if (res.status == 200) {
                 return res.json();
             }else {
@@ -113,7 +108,6 @@ document.getElementById('editarUsuario').addEventListener('click', function() {
             }
         })
         .then(data => {
-            console.log(data);
             document.getElementById('nombreUsuario').value = data.username;
             document.getElementById('emailUsuario').value = data.email;
         })
@@ -153,6 +147,7 @@ document.getElementById('btnEditarUsuario').addEventListener('click', function()
         method: 'POST',
         headers: {
             'Authorization': `${localStorage.getItem('token')}`,
+            'Content-Type': 'multipart/form-data'
         },
         body: usuario
     };
@@ -217,14 +212,17 @@ function agregarAmigo(){
 
     
     function eliminarAmigo(nombreAmigo){
-        let nombreUsuario = localStorage.getItem('username');
+        console.log(nombreAmigo);
         let amigos = {
-            "nombre_usuario": nombreUsuario,
-            "nombre_amigo": nombreAmigo,
+            "nombre_amigo": nombreAmigo
         }
-        let url = `http://localhost/matchfilm/api/gestionAmigos.php`;
+        let url = `http://localhost/matchfilm/api/eliminarAmigos.php`;
         let options= {
-            method: 'DELETE',
+            method: 'POST',
+            headers: {
+                'Authorization': `${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json',
+            },
             body: JSON.stringify(amigos)
         }
         fetch(url, options)
@@ -254,22 +252,19 @@ function agregarAmigo(){
     }
     function cargarNotificaciones(){
 
-        if (nombreUsuario) {
+        if (localStorage.getItem('token')) {
             let url = `http://localhost/matchfilm/api/post_notificacion.php`;
             let options = {
                 method: 'GET',
                 headers: {
                     'Authorization': `${localStorage.getItem('token')}`,
-                    'Content-Type': 'application/json'
                 },
             };            
             fetch(url, options)
                 .then(res => {
                     let notificaciones = document.getElementById('notificaciones');
                         notificaciones.innerHTML = '';
-                        console.log(res);
                     if (res.status == 200){
-
                         return res.json();
                     }else{
                         let notificaciones = document.getElementById('notificaciones');
@@ -278,10 +273,11 @@ function agregarAmigo(){
                 })
                 .then(data => {
                     console.log(data);
+                    if (data){
                         data.forEach(notificacion => {
-                            if (notificacion.notificacion == 'amistad' && notificacion.nombre_usuario == nombreUsuario){
+                            if (notificacion.notificacion == 'amistad' && notificacion.nombre_usuario == notificacion.username){
 
-                            }else if(notificacion.notificacion == 'amistad'){
+                            }else if(notificacion.notificacion == 'amistad' && notificacion.nombre_usuario != notificacion.username){
                                 notificaciones.innerHTML += `
                                 <div class="card">
                                     <div class="card-body">
@@ -291,12 +287,12 @@ function agregarAmigo(){
                                         <a href="#" onclick="eliminarNotificacion('${notificacion.nombre_usuario}','${notificacion.nombre_amigo}','${notificacion.notificacion}')" class="btn btn-danger">Rechazar</a>
                                     </div>
                                 </div>`;
-                            }else if (notificacion.nombre_usuario != nombreUsuario){
+                            }else if (notificacion.nombre_usuario != notificacion.username){
                                 notificaciones.innerHTML += `
                                 <div class="card">
                                     <div class="card-body">
-                                        <h5 class="card-title"><b>${notificacion.nombre_usuario}</b></h5>
-                                        <p class="card-text">${notificacion.notificacion}</p>
+                                        <h5 class="card-title"><b>${notificacion.notificacion}</b></h5>
+                                        <p class="card-text">Con: ${notificacion.nombre_usuario}</p>
                                     </div>
                                 </div>`;
                                 eliminarNotificacion(`${notificacion.nombre_usuario}`, `${notificacion.nombre_amigo}`, `${notificacion.notificacion}`)
@@ -308,10 +304,14 @@ function agregarAmigo(){
                                         <p class="card-text">Con: ${notificacion.nombre_amigo}</p>
                                     </div>
                                 </div>`;
-                                eliminarNotificacion(`${notificacion.nombre_usuario}`, `${notificacion.nombre_amigo}`, `${notificacion.notificacion}`)
+                                eliminarNotificacion(`${notificacion.nombre_amigo}`, `${notificacion.nombre_usuario}`, `${notificacion.notificacion}`)
                             }
                               
-                        });   
+                        }); 
+                    }else{
+                        let notificaciones = document.getElementById('notificaciones');
+                        notificaciones.innerHTML = 'No tienes notificaciones';
+                    }  
                 });
         } else {
             window.location='index.php';
@@ -320,7 +320,6 @@ function agregarAmigo(){
     };
 
     function aceptarAmigo(nombre_amigo){
-        
 
         if (nombreUsuario) {
             let url = `http://localhost/matchfilm/api/post_amigos.php`;
@@ -368,10 +367,9 @@ function agregarAmigo(){
                 
                             }).finally(()=>{
                                 console.log(nombreUsuario + nombre_amigo);
-                                eliminarNotificacion(nombre_amigo, nombreUsuario , 'amistad')
+                                eliminarNotificacion(nombre_amigo, localStorage.getItem('username') , 'amistad')
                                 cargarNotificaciones();
                                 cargarAmigos();
-                            
                             })
                     }
                 })
@@ -379,30 +377,40 @@ function agregarAmigo(){
         }
     }
                                
-    function eliminarNotificacion(nombre_usuario, nombre_amigo, notificacion){
-        let eliminar={
+    function eliminarNotificacion(nombre_usuario, nombre_amigo, notificacion) {
+        let eliminar = {
+            "nombre_usuario": nombre_usuario,
             "nombre_amigo": nombre_amigo,
             "notificacion": notificacion
-        }
-        console.log(eliminar);
+        };
+    
         let url = `http://localhost/matchfilm/api/delete_notificacion.php`;
-        const opciones= {
+        const opciones = {
             method: 'POST',
             headers: {
                 'Authorization': `${localStorage.getItem('token')}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(eliminar)
-        }
+        };
+    
         fetch(url, opciones)
-            .then(response=>{
-                return response.json();
-            }).then(datos =>{ 
-            }).catch(error=> {
-                console.log(error)
+            .then(response => {
+                if (response.ok) {
+                    return response.json(); // Devuelve la promesa para manejar los datos JSON
+                } else {
+                    throw new Error('Error en la solicitud');
+                }
             })
-            
-    } 
+            .then(datos => {
+                // Manejar los datos de respuesta si es necesario
+                console.log(datos); // Muestra los datos devueltos por la API
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+    
     function obtenerNuevoToken(usuario) {
         fetch(`http://localhost/matchfilm/api/generar_token.php?username=${usuario}`, {
             method: 'GET',

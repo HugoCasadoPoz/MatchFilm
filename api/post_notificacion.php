@@ -36,16 +36,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("HTTP/1.1 400 Bad Request");
     }
     exit;
-}elseif($_SERVER['REQUEST_METHOD'] == 'GET'){
-    if(isset($decoded->username)) {
+}elseif ($_SERVER['REQUEST_METHOD'] == 'GET') {
+    if (isset($decoded->username)) {
         $nombreUsuario = $decoded->username;
         $sql = "SELECT * FROM notificaciones WHERE nombre_usuario = '$nombreUsuario' OR nombre_amigo = '$nombreUsuario'";
         $result = $con->query($sql);
-        $data = $result->fetch_all(MYSQLI_ASSOC);
-        echo json_encode($data);
+        
+        if ($result && $result->num_rows > 0) {
+            $data = array();
+            while ($row = $result->fetch_assoc()) {
+                // Agregar el campo 'username' al objeto de cada fila
+                $row['username'] = $nombreUsuario;
+                $data[] = $row;
+            }
+            echo json_encode($data);
+        } else {
+            echo json_encode(array()); // Devolver un array vacío si no hay resultados
+        }
         exit;
-    }else{
-        header("HTTP/1.1 400 Bad mal");
+    } else {
+        header("HTTP/1.1 400 Bad Request");
+        exit;
     }
 }elseif($_SERVER['REQUEST_METHOD'] == 'DELETE'){
     $json = file_get_contents('php://input');
