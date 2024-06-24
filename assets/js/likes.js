@@ -70,7 +70,6 @@ if (localStorage.getItem('token')) {
             method: 'GET',
             headers: {
                 'Authorization': `${localStorage.getItem('token')}`,
-                'Content-Type': 'application/json'
             },
         };
         fetch(url, options)
@@ -86,9 +85,9 @@ if (localStorage.getItem('token')) {
                 console.log(data);
                 console.log(nombreUsuario);
                 let amigo;
-                if (nombreUsuario.toLowerCase() == data[0].nombre_amigo) {
+                if (nombreUsuario == data[0].nombre_amigo) {
                     amigo = data[0].nombre_usuario;
-                } else if (nombreUsuario.toLowerCase() == data[0].nombre_usuario) {
+                } else if (nombreUsuario == data[0].nombre_usuario) {
                     amigo = data[0].nombre_amigo;
                 }
                 let amigos = {

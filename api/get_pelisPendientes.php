@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $usuario = $decoded->username;
     $amigo = $usuarios->amigo;
 
-    $query = "SELECT * FROM movie_likes WHERE movie_id NOT IN (SELECT movie_id FROM movie_likes WHERE username = '$usuario') AND movie_id IN (SELECT movie_id FROM movie_likes WHERE username = '$amigo')";
+    $query = "SELECT * FROM movie_likes WHERE  movie_id NOT IN (SELECT movie_id FROM movie_likes WHERE username = '$usuario') AND movie_id IN (SELECT movie_id FROM movie_likes WHERE username = '$amigo' AND `like` = 1)";
     $result = $con->query($query);
 
     if ($result && $result->num_rows > 0) {
@@ -38,6 +38,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo json_encode($peliculas);
     } else {
         header("HTTP/1.1 401 Películas no encontradas"); 
-        echo json_encode(array("message" => "$result"));
+        echo json_encode(array("message" => "$query"));
     }
 }
